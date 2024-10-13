@@ -75,7 +75,7 @@ def crear_pdf(nombre_archivo, mostrar_solucion, mostrar_barra, dificultad, canti
         y_offset = 4.5 #cm
         pdf.setFont("Helvetica", 12)
         pdf.drawCentredString(ancho / 2, alto - y_offset * cm, f"Juego # {sudoku_hash}")
-        pdf.drawString(60, 25, 'https://github.com/neocronos666')     
+        pdf.drawString(60, 25, 'https://github.com/neocronos666/hashdoku')     
         pdf.drawString(450, 25, f"[Página {sheet+1} de {cantidad_hojas}]")     
         
         # Dibujar Sudoku
@@ -106,10 +106,11 @@ def crear_pdf(nombre_archivo, mostrar_solucion, mostrar_barra, dificultad, canti
             pdf.line(x_offset + i * tam_celda * mm, y_offset, x_offset + i * tam_celda * mm, y_offset - tabla_alto)
 
         # Solución opcional
+        y_offset_solucion = y_offset - tabla_alto - 2 * cm
         if mostrar_solucion:
             tam_celda = 7  # mm
             pdf.setFont("Helvetica", 10)
-            y_offset_solucion = y_offset - tabla_alto - 2 * cm
+            
             pdf.drawString(173, y_offset_solucion + 10 , "Solución:")
             for i in range(9):
                 for j in range(9):
@@ -117,7 +118,8 @@ def crear_pdf(nombre_archivo, mostrar_solucion, mostrar_barra, dificultad, canti
                     if valor != 0:
                         x_pos = x_offset + j * tam_celda * mm + tam_celda * mm / 2
                         y_pos = y_offset_solucion - i * tam_celda * mm - tam_celda * mm / 2
-                        pdf.drawCentredString(x_pos, y_pos, str(valor))
+                        pdf.drawCentredString(x_pos, y_pos, str(valor))        
+
         
         # Barra de dificultad
         if mostrar_barra:
@@ -135,21 +137,15 @@ def crear_pdf(nombre_archivo, mostrar_solucion, mostrar_barra, dificultad, canti
             pdf.drawString(posx, posy - font_size - space, f'[{bar}]')
             pdf.drawString(posx, posy - 2 * (font_size + space), r' Facil                Dificil')
 
-        # Nueva Pagina
-        # if sheet < cantidad_hojas - 1:
-        pdf.showPage()
-
-
-
-    # -------------------
-
+        # Nueva Pagina        
+        pdf.showPage()    
     pdf.save()
 
 def main():
     # =======DEFAULT SETTINGS=======
-    dificultad= 54
+    dificultad= 40
     nombre_pdf = 'sudo.pdf'
-    cantidad_hojas = 10
+    cantidad_hojas = 100
     mostrar_solucion = True
     mostrar_barra = True
     #===============================
@@ -160,10 +156,7 @@ def main():
     cantidad_hojas = int(sys.argv[3]) if len(sys.argv) > 3 and sys.argv[3] else cantidad_hojas
     mostrar_solucion = bool(sys.argv[4]) if len(sys.argv) > 4 and sys.argv[4] else mostrar_solucion
     mostrar_barra = bool(sys.argv[5]) if len(sys.argv) > 5 and sys.argv[4] else mostrar_barra
-
-    # sudoku = generar_sudoku()
-    # sudoku_hash = generar_hash(sudoku)
-    # oculto = ocultar_numeros(sudoku, dificultad)
+   
     crear_pdf(nombre_pdf, mostrar_solucion, mostrar_barra, dificultad,cantidad_hojas)
 
 if __name__ == "__main__":
