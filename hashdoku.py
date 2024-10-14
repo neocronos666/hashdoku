@@ -4,6 +4,8 @@ import sys
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.units import cm, mm
 from reportlab.pdfgen import canvas
+import base64
+from encoding import EncodingSudoku
 
 def generar_sudoku():
     base = 3
@@ -20,10 +22,19 @@ def generar_sudoku():
     board = [[nums[pattern(r, c)] for c in cols] for r in filas]
     return board
 
-def generar_hash(sudoku):
+def generar_hash(sudoku): #DEPRECATED
     sudoku_str = ''.join(''.join(map(str, fila)) for fila in sudoku)
     hash_object = hashlib.sha1(sudoku_str.encode())
     return hash_object.hexdigest()
+
+def generar_cadena_bit_packing(sudoku): #DEPRECATED
+    # Convertimos la lista de 9x9 en una cadena binaria
+    bits = ''.join(f'{num:04b}' for fila in sudoku for num in fila)
+    # Convertimos la cadena binaria en bytes
+    byte_data = int(bits, 2).to_bytes(len(bits) // 8, byteorder='big')
+    # Codificamos en base64 (puedes cambiar a base85 si lo prefieres)
+    return base64.b85encode(byte_data).decode('utf-8')
+
 
 def ocultar_numeros(sudoku, dificultad):
     oculto = [fila[:] for fila in sudoku]  # Copia del sudoku
@@ -57,7 +68,10 @@ def crear_pdf(nombre_archivo, mostrar_solucion, mostrar_barra, dificultad, canti
     # cantidad_hojas
     for sheet in range(cantidad_hojas):
         sudoku = generar_sudoku()
-        sudoku_hash = generar_hash(sudoku)
+        # sudoku_hash = generar_hash(sudoku)        
+        # sudoku_hash = generar_cadena_bit_packing(sudoku)
+        es = EncodingSudoku()
+        sudoku_hash = es.generar_cadena_base62(sudoku)
         oculto = ocultar_numeros(sudoku, dificultad)
 
         # Título
@@ -74,7 +88,7 @@ def crear_pdf(nombre_archivo, mostrar_solucion, mostrar_barra, dificultad, canti
         #Subtitulo
         y_offset = 4.5 #cm
         pdf.setFont("Helvetica", 12)
-        pdf.drawCentredString(ancho / 2, alto - y_offset * cm, f"Juego # {sudoku_hash}")
+        pdf.drawCentredString(ancho / 2, alto - y_offset * cm, f"HASH DEL JUEGO: {sudoku_hash}")
         pdf.drawString(60, 25, 'https://github.com/neocronos666/hashdoku')     
         pdf.drawString(450, 25, f"[Página {sheet+1} de {cantidad_hojas}]")     
         
@@ -144,9 +158,9 @@ def crear_pdf(nombre_archivo, mostrar_solucion, mostrar_barra, dificultad, canti
 def main():
     # =======DEFAULT SETTINGS=======
     dificultad= 40
-    nombre_pdf = 'sudo.pdf'
+    nombre_pdf = 'Hashdokus (100_sudokus).pdf'
     cantidad_hojas = 100
-    mostrar_solucion = True
+    mostrar_solucion = False
     mostrar_barra = True
     #===============================
 

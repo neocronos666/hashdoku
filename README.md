@@ -104,7 +104,7 @@ Esto tomará el hash tu_hash_aqui y generará un PDF llamado solucion.pdf con la
 ¡Sientete libre de contribuir! Haz un fork del repositorio y envía tus pull requests.
 
 ## 📚 Créditos
-Este proyecto fue creado por [Sergio Silvstri](https://github.com/neocronos666) para mi tocaypo Rubén el padre de mi amigo Marco, a quien le gusta resolver Sudokus en papel.
+Este proyecto fue creado por [Sergio Silvstri](https://github.com/neocronos666) para mi tocayo Rubén el padre de mi amigo Marco, a quien le gusta resolver Sudokus en papel.
 
 # :muscle: Creditos a terceros
 - El título del proyecto fue generado con arte ASCII en [patorjk.com](https://patorjk.com/software/taag/#p=display&f=Univers&t=Hashdoku) usando la fuente "Univers".

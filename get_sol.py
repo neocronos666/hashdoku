@@ -2,12 +2,35 @@ from reportlab.lib.pagesizes import A4
 from reportlab.lib.units import cm, mm
 from reportlab.pdfgen import canvas
 import sys
+import base64
+from encoding import EncodingSudoku
 
+
+def reconstruir_sudoku_bit_packing(cadena_codificada):
+    # Decodificamos desde base85
+    byte_data = base64.b85decode(cadena_codificada.encode('utf-8'))
+    # Convertimos de bytes a una cadena binaria
+    bits = bin(int.from_bytes(byte_data, byteorder='big'))[2:].zfill(81 * 4)
+    # Reconstruimos la lista de 9x9
+    return [[int(bits[i*36 + j*4:i*36 + (j+1)*4], 2) for j in range(9)] for i in range(9)]
+
+
+'''
 def reconstruir_sudoku(hash_str): #AAAAAACAAAAA NO ANDAAA
     numeros = [int(c) for c in hash_str]
     sudoku = [numeros[i:i + 9] for i in range(0, len(numeros), 9)]
     return sudoku
 
+def reconstruir_sudoku(hash_str):
+    # Convertir el hash hexadecimal a una lista de enteros
+    byte_array = bytearray.fromhex(hash_str)
+    numeros = [int(byte) % 9 + 1 for byte in byte_array[:81]]
+    sudoku = [numeros[i:i + 9] for i in range(0, len(numeros), 9)]
+    return sudoku
+'''
+def reconstruir_sudoku(hash_str):
+    es = EncodingSudoku()
+    return es.reconstruir_sudoku_base62(hash_str)
 
 def crear_pdf_sudoku(nombre_archivo, sudoku):
     c = canvas.Canvas(nombre_archivo, pagesize=A4)
@@ -47,8 +70,12 @@ def imprimir_sudoku(sudoku):
     for fila in sudoku:
         print(" ".join(str(num) for num in fila))
 
+
+
+
+# ============================
 def main():
-    hash_str = sys.argv[1] if len(sys.argv) > 1 and sys.argv[1] else 'dcfe56081b623439c85a9342b2a42c94d226df75'
+    hash_str = sys.argv[1] if len(sys.argv) > 1 and sys.argv[1] else '8#maoVNMoMB2SmvtMQbpYvw4!JbaHYC*cTGgazz*g-*w'
     sudoku = reconstruir_sudoku(hash_str)
     
     if len(sys.argv) > 2:
